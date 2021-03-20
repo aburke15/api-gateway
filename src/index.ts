@@ -1,25 +1,25 @@
 import http from 'http';
-import express, { request } from 'express';
-import bodyParser from 'body-parser';
-import logging from './config/logging';
+import express from 'express';
+import logger from './config/logger';
 import config from './config/config';
 import healthRoutes from './routes/health';
+import authRoutes from './routes/auth';
 
 const NAMESPACE = 'Server';
 const router = express();
 
 router.use((req, res, next) => {
-    logging.info(NAMESPACE, `METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`);
+    logger.info(NAMESPACE, `METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`);
 
     res.on('finish', () => {
-        logging.info(NAMESPACE, `METHOD: [${req.method}] - URL: [${req.url}] - STATUS: [${res.statusCode}] - IP: [${req.socket.remoteAddress}]`);
+        logger.info(NAMESPACE, `METHOD: [${req.method}] - URL: [${req.url}] - STATUS: [${res.statusCode}] - IP: [${req.socket.remoteAddress}]`);
     });
 
     next();
 });
 
-router.use(bodyParser.urlencoded({ extended: true }));
-router.use(bodyParser.json());
+router.use(express.urlencoded({ extended: true }));
+router.use(express.json());
 
 router.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -34,6 +34,7 @@ router.use((req, res, next) => {
 });
 
 router.use('/api/health', healthRoutes);
+router.use('/api/auth', authRoutes);
 
 router.use((req, res, next) => {
     const error = new Error('Not found');
@@ -45,4 +46,4 @@ router.use((req, res, next) => {
 
 const httpServer = http.createServer(router);
 
-httpServer.listen(config.server.port, () => logging.info(NAMESPACE, `Server is running ${config.server.hostname}:${config.server.port}`));
+httpServer.listen(config.server.port, () => logger.info(NAMESPACE, `Server is running ${config.server.hostname}:${config.server.port}`));
