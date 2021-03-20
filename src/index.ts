@@ -2,13 +2,14 @@ import http from 'http';
 import express from 'express';
 import logger from './config/logger';
 import config from './config/config';
+//import jwt from 'jsonwebtoken';
 import healthRoutes from './routes/health';
 import authRoutes from './routes/auth';
 
 const NAMESPACE = 'Server';
-const router = express();
+const app = express();
 
-router.use((req, res, next) => {
+app.use((req, res, next) => {
     logger.info(NAMESPACE, `METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`);
 
     res.on('finish', () => {
@@ -18,10 +19,10 @@ router.use((req, res, next) => {
     next();
 });
 
-router.use(express.urlencoded({ extended: true }));
-router.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-router.use((req, res, next) => {
+app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
 
@@ -33,10 +34,10 @@ router.use((req, res, next) => {
     next();
 });
 
-router.use('/api/health', healthRoutes);
-router.use('/api/auth', authRoutes);
+app.use('/api/health', healthRoutes);
+app.use('/api/auth', authRoutes);
 
-router.use((req, res, next) => {
+app.use((req, res, next) => {
     const error = new Error('Not found');
 
     res.status(404).json({
@@ -44,6 +45,6 @@ router.use((req, res, next) => {
     });
 });
 
-const httpServer = http.createServer(router);
+const httpServer = http.createServer(app);
 
 httpServer.listen(config.server.port, () => logger.info(NAMESPACE, `Server is running ${config.server.hostname}:${config.server.port}`));
