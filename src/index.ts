@@ -3,7 +3,6 @@ import express from 'express';
 import logger from './config/logger';
 import config from './config/config';
 import mongoose from 'mongoose';
-import mongodb from 'mongodb';
 //import jwt from 'jsonwebtoken';
 import healthRoutes from './routes/health';
 import authRoutes from './routes/auth';
@@ -11,21 +10,16 @@ import authRoutes from './routes/auth';
 const NAMESPACE = 'Server';
 const app = express();
 
-const MongoClient = mongodb.MongoClient;
 const uri = `${process.env.DB_URI}`;
 
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-client.connect((err) => {
-    if (err) {
-        console.log(err.message);
-    } else {
-        console.log('connected to db');
-    }
+const mongoose_options = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+    useCreateIndex: true
+};
 
-    const collection = client.db('test').collection('devices');
-
-    client.close();
-});
+mongoose.connect(uri, mongoose_options, () => console.log('connected to db'));
 
 app.use((req, res, next) => {
     logger.info(NAMESPACE, `METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`);
