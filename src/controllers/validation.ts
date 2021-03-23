@@ -12,3 +12,12 @@ export const registerValidation = (data: object) => {
 
     return Joi.validate(data, schema);
 };
+
+export const loginValidation = (data: object) => {
+    const schema = {
+        email: Joi.string().min(6).email().required(),
+        password: Joi.string().min(6).max(100).required()
+    };
+
+    return Joi.validate(data, schema);
+};
