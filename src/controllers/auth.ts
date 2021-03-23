@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import User from '../models/User';
 import { registerValidation, loginValidation } from '../controllers/validation';
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
 const register = async (req: Request, res: Response, next: NextFunction) => {
@@ -59,9 +60,8 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         });
     }
 
-    return res.status(200).send({
-        success: 'Logged in.'
-    });
+    const token = jwt.sign({ _id: user._id }, process.env.ACCESS_TOKEN_SECRET);
+    return res.header('auth-token', token).send(token);
 };
 
 const checkIfEmailExists = async (email: string): Promise<Boolean> => {
