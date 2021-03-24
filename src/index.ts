@@ -18,6 +18,8 @@ const mongoose_options = {
     useCreateIndex: true
 };
 
+console.log('new thing');
+
 mongoose.connect(uri, mongoose_options);
 
 app.use((req, res, next) => {
