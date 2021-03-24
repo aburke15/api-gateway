@@ -18,7 +18,7 @@ const mongoose_options = {
     useCreateIndex: true
 };
 
-mongoose.connect(uri, mongoose_options, () => console.log('connected to db'));
+mongoose.connect(uri, mongoose_options);
 
 app.use((req, res, next) => {
     logger.info(NAMESPACE, `METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`);
