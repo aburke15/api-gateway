@@ -30,6 +30,8 @@ app.use((req, res, next) => {
     next();
 });
 
+console.log('another new thing');
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
