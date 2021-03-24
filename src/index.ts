@@ -3,9 +3,8 @@ import express from 'express';
 import logger from './config/logger';
 import config from './config/config';
 import mongoose from 'mongoose';
-//import jwt from 'jsonwebtoken';
-import healthRoutes from './routes/health';
-import authRoutes from './routes/auth';
+import healthRoutes from './routes/healthRoutes';
+import authRoutes from './routes/authRoutes';
 
 const NAMESPACE = 'Server';
 const app = express();

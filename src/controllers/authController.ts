@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import User from '../models/User';
-import { registerValidation, loginValidation } from '../controllers/validation';
+import { registerValidation, loginValidation } from './validationController';
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
