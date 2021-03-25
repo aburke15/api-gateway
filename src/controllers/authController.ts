@@ -1,13 +1,18 @@
 import { NextFunction, Request, Response } from 'express';
-import ValidationService from '../services/validationService';
-import UserService from '../services/userService';
-import AuthService from '../services/authService';
-import User from '../models/User';
+import container from '../appContainer';
 
 class AuthController {
-    private userService = new UserService();
-    private authService = new AuthService();
-    private validationService = new ValidationService();
+    User = require('../models/User');
+
+    private userService;
+    private authService;
+    private validationService;
+
+    constructor() {
+        this.userService = container.resolve('userService');
+        this.authService = container.resolve('authService');
+        this.validationService = container.resolve('validationService');
+    }
 
     public register = async (req: Request, res: Response, next: NextFunction) => {
         const { error } = this.validationService.registerValidation(req.body);
@@ -61,7 +66,7 @@ class AuthController {
     };
 
     private mapUser = (req: any, hashedPassword: String): any => {
-        return new User({
+        return new this.User({
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             username: req.body.username,
