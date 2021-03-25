@@ -5,6 +5,7 @@ import config from './config/config';
 import mongoose from 'mongoose';
 import healthRoutes from './routes/healthRoutes';
 import authRoutes from './routes/authRoutes';
+import postRoutes from './routes/postRoutes';
 
 const NAMESPACE = 'Server';
 const app = express();
@@ -17,6 +18,8 @@ const mongoose_options = {
     useFindAndModify: false,
     useCreateIndex: true
 };
+
+console.log('new thing');
 
 mongoose.connect(uri, mongoose_options);
 
@@ -49,6 +52,7 @@ app.use((req, res, next) => {
 
 app.use('/api/health', healthRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/posts', postRoutes);
 
 app.use((req, res, next) => {
     const error = new Error('Not found');
