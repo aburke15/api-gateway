@@ -1,3 +1,5 @@
+import { NextFunction } from 'express';
+
 class AuthService {
     private bcrypt = require('bcryptjs');
     private jwt = require('jsonwebtoken');
