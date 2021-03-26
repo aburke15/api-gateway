@@ -1,26 +1,30 @@
 class ValidationService {
-    Joi = require('@hapi/joi');
+    private readonly joi;
 
-    public registerValidation = (data: object) => {
+    constructor(opts: any) {
+        this.joi = opts.Joi;
+    }
+
+    public registerValidation = (data: any) => {
         const schema = {
-            firstName: this.Joi.string().max(50),
-            lastName: this.Joi.string().max(50),
-            username: this.Joi.string().min(4).max(50).required(),
-            password: this.Joi.string().min(6).max(100).required(),
-            email: this.Joi.string().min(6).email().required(),
-            phone: this.Joi.string().min(10).max(11)
+            firstName: this.joi.string().max(50),
+            lastName: this.joi.string().max(50),
+            username: this.joi.string().min(4).max(50).required(),
+            password: this.joi.string().min(6).max(100).required(),
+            email: this.joi.string().min(6).email().required(),
+            phone: this.joi.string().min(10).max(11)
         };
 
-        return this.Joi.validate(data, schema);
+        return this.joi.validate(data, schema);
     };
 
-    public loginValidation = (data: object) => {
+    public loginValidation = (data: any) => {
         const schema = {
-            email: this.Joi.string().min(6).email().required(),
-            password: this.Joi.string().min(6).max(100).required()
+            email: this.joi.string().min(6).email().required(),
+            password: this.joi.string().min(6).max(100).required()
         };
 
-        return this.Joi.validate(data, schema);
+        return this.joi.validate(data, schema);
     };
 }
 

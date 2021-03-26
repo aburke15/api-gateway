@@ -1,9 +1,8 @@
 import express from 'express';
-import UserService from '../services/userService';
-import AuthService from '../services/authService';
+import container from '../container';
 
-const userService = new UserService();
-const authService = new AuthService();
+const userService = container.resolve('userService');
+const authService = container.resolve('authService');
 
 const router = express.Router();
 

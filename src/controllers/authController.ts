@@ -1,16 +1,16 @@
 import { NextFunction, Request, Response } from 'express';
 
 class AuthController {
-    User = require('../models/User');
-
-    private userService;
-    private authService;
-    private validationService;
+    private readonly userService;
+    private readonly authService;
+    private readonly validationService;
+    private readonly User;
 
     constructor(opts: any) {
         this.userService = opts.userService;
         this.authService = opts.authService;
         this.validationService = opts.validationService;
+        this.User = opts.User;
     }
 
     public register = async (req: Request, res: Response, next: NextFunction) => {
