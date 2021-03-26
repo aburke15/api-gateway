@@ -4,14 +4,18 @@ import AuthService from './services/authService';
 import UserService from './services/userService';
 import ValidationService from './services/validationService';
 
-const { createContainer, asClass } = require('awilix');
+const awilix = require('awilix');
+const { createContainer, asClass } = awilix;
 
-const container = createContainer();
+const services = { UserService, AuthService, ValidationService };
+const container = createContainer(awilix.InjectionMode.PROXY);
 
 container.register({
     authService: asClass(AuthService),
     userService: asClass(UserService),
-    validationService: asClass(ValidationService)
+    validationService: asClass(ValidationService),
+    healthController: asClass(HealthContoller),
+    authController: asClass(AuthController).inject(() => services)
 });
 
 export = container;

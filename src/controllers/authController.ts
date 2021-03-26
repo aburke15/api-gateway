@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import container from '../appContainer';
 
 class AuthController {
     User = require('../models/User');
@@ -8,10 +7,10 @@ class AuthController {
     private authService;
     private validationService;
 
-    constructor() {
-        this.userService = container.resolve('userService');
-        this.authService = container.resolve('authService');
-        this.validationService = container.resolve('validationService');
+    constructor(opts: any) {
+        this.userService = opts.userService;
+        this.authService = opts.authService;
+        this.validationService = opts.validationService;
     }
 
     public register = async (req: Request, res: Response, next: NextFunction) => {
