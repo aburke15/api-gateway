@@ -1,8 +1,8 @@
 import express from 'express';
-import HealthController from '../controllers/healthController';
+import container from '../container';
 
 const router = express.Router();
-const healthController = new HealthController();
+const healthController = container.resolve('healthController');
 
 router.get('/', healthController.healthCheck);
 

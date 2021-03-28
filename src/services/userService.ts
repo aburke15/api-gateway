@@ -1,12 +1,16 @@
-import User from '../models/User';
-
 class UserService {
+    private readonly User;
+
+    constructor(opts: any) {
+        this.User = opts.User;
+    }
+
     public getSingleUser = async (email: string): Promise<any> => {
-        return await User.findOne({ email: email });
+        return await this.User.findOne({ email: email });
     };
 
     public getSingleUserById = async (id: string): Promise<any> => {
-        return await User.findOne({ _id: id });
+        return await this.User.findOne({ _id: id });
     };
 }
 

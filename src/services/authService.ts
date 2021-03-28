@@ -1,17 +1,22 @@
 import { Request, Response, NextFunction } from 'express';
 
 class AuthService {
-    private bcrypt = require('bcryptjs');
-    private jwt = require('jsonwebtoken');
+    private readonly bcrypt;
+    private readonly jwt;
 
-    public getHashedPassword = async (password: string): Promise<String> => {
+    constructor(opts: any) {
+        this.bcrypt = opts.bcrypt;
+        this.jwt = opts.jwt;
+    }
+
+    public getHashedPassword = async (password: string): Promise<string> => {
         const saltRounds = 10;
         const salt = await this.bcrypt.genSalt(saltRounds);
 
         return await this.bcrypt.hash(password, salt);
     };
 
-    public bcryptCompare = async (password: string, user: any): Promise<Boolean> => {
+    public bcryptCompare = async (password: string, user: any): Promise<boolean> => {
         return await this.bcrypt.compare(password, user.password);
     };
 

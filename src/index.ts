@@ -19,8 +19,6 @@ const mongoose_options = {
     useCreateIndex: true
 };
 
-console.log('new thing');
-
 mongoose.connect(uri, mongoose_options);
 
 app.use((req, res, next) => {
@@ -44,7 +42,7 @@ app.use((req, res, next) => {
 
     if (req.method == 'OPTIONS') {
         res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
-        return res.status(200).json({});
+        return res.status(200).send({});
     }
 
     next();
@@ -57,8 +55,8 @@ app.use('/api/posts', postRoutes);
 app.use((req, res, next) => {
     const error = new Error('Not found');
 
-    res.status(404).json({
-        message: error.message
+    res.status(404).send({
+        error: error.message
     });
 });
 
