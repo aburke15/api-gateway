@@ -6,6 +6,8 @@ class AuthController {
     private readonly validationService;
     private readonly User;
 
+    private refreshTokens: any = [];
+
     constructor(opts: any) {
         this.userService = opts.userService;
         this.authService = opts.authService;
@@ -61,7 +63,18 @@ class AuthController {
         }
 
         const token = this.authService.generateToken(user);
-        return res.header('auth-token', token).send(token);
+        const refreshToken = this.authService.refreshToken(user);
+        this.refreshTokens.push(refreshToken);
+
+        return res.status(200).send({ token: token, refreshToken: refreshToken });
+    };
+
+    public token = (req: Request, res: Response, next: NextFunction) => {
+        const refreshToken = req.body.token;
+        if (refreshToken == null) return res.sendStatus(401);
+        if (!this.refreshTokens.includes(refreshToken)) return res.sendStatus(403);
+
+        const token = this.authService.verify();
     };
 
     private mapUser = (req: any, hashedPassword: String): any => {

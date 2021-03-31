@@ -21,7 +21,11 @@ class AuthService {
     };
 
     public generateToken = (user: any) => {
-        return this.jwt.sign({ _id: user._id }, process.env.ACCESS_TOKEN_SECRET);
+        return this.jwt.sign({ _id: user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15s' });
+    };
+
+    public refreshToken = (user: any) => {
+        return this.jwt.sign({ _id: user._id }, process.env.REFRESH_TOKEN_SECRET);
     };
 
     public verifyToken = (req: Request, res: Response, next: NextFunction) => {
@@ -35,6 +39,8 @@ class AuthService {
             res.status(500).send({ error: 'Failed to authenticate' });
         }
     };
+
+    public verify = (req: Request, res: Response, next: NextFunction): any => {};
 }
 
 export = AuthService;

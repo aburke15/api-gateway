@@ -1,13 +1,13 @@
 FROM node:15
 
-WORKDIR /app
+WORKDIR /app/src
 
 COPY package*.json ./
 COPY tsconfig*.json ./
 
 COPY src /app/src
 
-RUN npm install && npm install -g typescript
+RUN npm install
 
 EXPOSE 80
 
