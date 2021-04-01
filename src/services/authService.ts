@@ -3,28 +3,34 @@ import { Request, Response, NextFunction } from 'express';
 class AuthService {
     private readonly bcrypt;
     private readonly jwt;
+    private readonly RefreshToken;
 
     constructor(opts: any) {
         this.bcrypt = opts.bcrypt;
         this.jwt = opts.jwt;
+        this.RefreshToken = opts.RefreshToken;
     }
 
-    public getHashedPassword = async (password: string): Promise<string> => {
+    public async getHashedPassword(password: string): Promise<string> {
         const saltRounds = 10;
         const salt = await this.bcrypt.genSalt(saltRounds);
 
         return await this.bcrypt.hash(password, salt);
-    };
+    }
 
-    public bcryptCompare = async (password: string, user: any): Promise<boolean> => {
+    public async bcryptCompare(password: string, user: any): Promise<boolean> {
         return await this.bcrypt.compare(password, user.password);
-    };
+    }
 
-    public generateToken = (user: any) => {
-        return this.jwt.sign({ _id: user._id }, process.env.ACCESS_TOKEN_SECRET);
-    };
+    public generateToken(user: any) {
+        return this.jwt.sign({ _id: user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '20s' });
+    }
 
-    public verifyToken = (req: Request, res: Response, next: NextFunction) => {
+    public refreshToken(user: any) {
+        return this.jwt.sign({ _id: user._id }, process.env.REFRESH_TOKEN_SECRET);
+    }
+
+    public verifyToken(req: Request, res: Response, next: NextFunction) {
         const token = req.headers['auth-token'];
         if (!token) res.status(401).send({ error: 'Unauthorized' });
 
@@ -34,7 +40,13 @@ class AuthService {
         } catch (err) {
             res.status(500).send({ error: 'Failed to authenticate' });
         }
-    };
+    }
+
+    public getJwt(): any {
+        return this.jwt;
+    }
+
+    public containsRefreshToken = async (token: string) => {};
 }
 
 export = AuthService;
