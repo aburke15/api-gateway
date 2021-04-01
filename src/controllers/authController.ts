@@ -5,6 +5,8 @@ class AuthController {
     private readonly authService;
     private readonly validationService;
     private readonly User;
+    private readonly RefreshToken;
+    private readonly tokenRepository;
 
     private refreshTokens: any = [];
 
@@ -13,6 +15,8 @@ class AuthController {
         this.authService = opts.authService;
         this.validationService = opts.validationService;
         this.User = opts.User;
+        this.RefreshToken = opts.RefreshToken;
+        this.tokenRepository = opts.TokenRepository;
     }
 
     public register = async (req: Request, res: Response, next: NextFunction) => {
@@ -64,20 +68,32 @@ class AuthController {
 
         const token = this.authService.generateToken(user);
         const refreshToken = this.authService.refreshToken(user);
-        this.refreshTokens.push(refreshToken);
+        let persistRefreshToken = await this.tokenRepository.findOne('refreshToken', refreshToken);
+
+        if (!persistRefreshToken) {
+            persistRefreshToken = this.mapRefreshToken(refreshToken);
+            await persistRefreshToken.save();
+        }
 
         return res.status(200).send({ token: token, refreshToken: refreshToken });
     };
 
-    public token = (req: Request, res: Response, next: NextFunction) => {
+    public token = async (req: Request, res: Response, next: NextFunction) => {
         const refreshToken = req.body.token;
         if (refreshToken == null) return res.sendStatus(401);
-        if (!this.refreshTokens.includes(refreshToken)) return res.sendStatus(403);
+        //if (!this.refreshTokens.includes(refreshToken)) return res.sendStatus(403);
+        const persistRefreshToken = await this.tokenRepository.findOne('refreshToken', refreshToken);
+        if (refreshToken !== persistRefreshToken) return res.sendStatus(403);
 
-        const token = this.authService.verify();
+        const jwt = this.authService.getJwt();
+        jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err: any, user: any) => {
+            if (err) return res.sendStatus(401);
+            const token = this.authService.generateToken(user);
+            return res.status(200).send({ token: token });
+        });
     };
 
-    private mapUser = (req: any, hashedPassword: String): any => {
+    private mapUser(req: any, hashedPassword: string): any {
         return new this.User({
             firstName: req.body.firstName,
             lastName: req.body.lastName,
@@ -86,7 +102,13 @@ class AuthController {
             email: req.body.email,
             phone: req.body.phone
         });
-    };
+    }
+
+    private mapRefreshToken(token: string): any {
+        return new this.RefreshToken({
+            refreshToken: token
+        });
+    }
 }
 
 export = AuthController;
