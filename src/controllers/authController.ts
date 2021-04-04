@@ -2,13 +2,11 @@ import { NextFunction, Request, Response } from 'express';
 
 class AuthController {
     private readonly userService;
-    private readonly authService;
+    authService: any;
     private readonly validationService;
     private readonly User;
     private readonly RefreshToken;
     private readonly tokenRepository;
-
-    private refreshTokens: any = [];
 
     constructor(opts: any) {
         this.userService = opts.userService;
@@ -16,7 +14,7 @@ class AuthController {
         this.validationService = opts.validationService;
         this.User = opts.User;
         this.RefreshToken = opts.RefreshToken;
-        this.tokenRepository = opts.TokenRepository;
+        this.tokenRepository = opts.tokenRepository;
     }
 
     public register = async (req: Request, res: Response, next: NextFunction) => {
@@ -68,7 +66,8 @@ class AuthController {
 
         const token = this.authService.generateToken(user);
         const refreshToken = this.authService.refreshToken(user);
-        let persistRefreshToken = await this.tokenRepository.findOne('refreshToken', refreshToken);
+
+        let persistRefreshToken = await this.tokenRepository.getByProperty('refreshToken', refreshToken);
 
         if (!persistRefreshToken) {
             persistRefreshToken = this.mapRefreshToken(refreshToken);
@@ -82,7 +81,7 @@ class AuthController {
         const refreshToken = req.body.token;
         if (refreshToken == null) return res.sendStatus(401);
         //if (!this.refreshTokens.includes(refreshToken)) return res.sendStatus(403);
-        const persistRefreshToken = await this.tokenRepository.findOne('refreshToken', refreshToken);
+        const persistRefreshToken = await this.tokenRepository.getByProperty('refreshToken', refreshToken);
         if (refreshToken !== persistRefreshToken) return res.sendStatus(403);
 
         const jwt = this.authService.getJwt();
