@@ -21,7 +21,7 @@ export class AuthService {
     }
 
     generateToken(user: any) {
-        return this.jwt.sign({ _id: user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '20s' });
+        return this.jwt.sign({ _id: user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '45s' });
     }
 
     refreshToken(user: any) {
@@ -31,19 +31,6 @@ export class AuthService {
     headerContainsToken(token: string): boolean {
         if (!token) return false;
         return true;
-    }
-
-    verifyToken() {
-        // const token = req.headers['auth-token'];
-        // if (!token) res.status(401).send({ error: 'Unauthorized' });
-        // try {
-        //     const decode = this.jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-        //     req.params.user = decode;
-        //     next();
-        // } catch (err) {
-        //     console.log(err);
-        //     res.status(500).send({ error: 'Failed to authenticate' });
-        // }
     }
 
     getJwt(): any {

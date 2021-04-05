@@ -6,7 +6,7 @@ interface Post {
 }
 
 export class PostController {
-    jwt;
+    userService;
     posts: Post[] = [
         { title: 'hello', body: 'world' },
         { title: 'post1', body: 'this is post one' },
@@ -16,23 +16,11 @@ export class PostController {
     ];
 
     constructor(opts: any) {
-        this.jwt = opts.jwt;
+        this.userService = opts.userService;
     }
 
-    getPosts(req: Request, res: Response, next: NextFunction) {
-        //TODO: extract this out
-        const token = req.headers['auth-token'];
-        if (!token) return res.status(401).send({ error: 'Unauthorized' });
-
-        try {
-            const decode = this.jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-            req.params.user = decode;
-            next();
-        } catch (err) {
-            console.log(err);
-            return res.status(500).send({ error: 'Failed to authenticate' });
-        }
-
-        return res.status(200).send(this.posts);
+    async getPosts(req: Request, res: Response, next: NextFunction) {
+        const user = await this.userService.getSingleUserById(req.params.user);
+        return res.status(200).send(user);
     }
 }

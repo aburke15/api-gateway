@@ -15,6 +15,7 @@ const jwt = require('jsonwebtoken');
 const awilix = require('awilix');
 const { createContainer, asClass, asValue, asFunction } = awilix;
 
+const postControllerDependencies = { UserService };
 const authServiceDependencies = { bcrypt, jwt };
 const authControllerDependencies = { UserService, AuthService, ValidationService, User, RefreshToken, TokenRepository };
 const container = createContainer(awilix.InjectionMode.PROXY);
@@ -25,7 +26,7 @@ container.register({
     validationService: asClass(ValidationService).inject(() => Joi),
     healthController: asClass(HealthContoller),
     authController: asClass(AuthController).inject(() => authControllerDependencies),
-    postController: asClass(PostController).inject(() => jwt),
+    postController: asClass(PostController).inject(() => postControllerDependencies),
     Joi: asValue(Joi),
     bcrypt: asValue(bcrypt),
     jwt: asValue(jwt),
