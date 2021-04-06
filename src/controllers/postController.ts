@@ -10,8 +10,7 @@ export class PostController {
     }
 
     public getPosts = async (req: Request, res: Response, next: NextFunction) => {
-        console.log('in getPosts method');
-        let authenticated = this.authService.isAuthenticated(req, next);
+        const authenticated = this.authService.isAuthenticated(req, next);
         if (!authenticated) return res.sendStatus(401);
 
         const user = await this.userService.getSingleUserById(req.params.user);

@@ -1,6 +1,6 @@
 export class AuthService {
-    bcrypt;
-    jwt;
+    private readonly bcrypt;
+    private readonly jwt;
 
     constructor(opts: any) {
         this.bcrypt = opts.bcrypt;
@@ -19,27 +19,30 @@ export class AuthService {
     };
 
     public generateToken = (user: any) => {
-        return this.jwt.sign({ _id: user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' });
+        return this.jwt.sign({ _id: user._id }, process.env.ACCESS_TOKEN_SECRET);
     };
 
     public refreshToken = (user: any) => {
         return this.jwt.sign({ _id: user._id }, process.env.REFRESH_TOKEN_SECRET);
     };
 
-    public headerContainsToken = (token: string): boolean => {
+    public containsToken = (token: string): boolean => {
         return !(token === '' || token === undefined || token === null);
     };
 
-    public isAuthenticated = (req: any, next: any): boolean => {
-        let token = req.headers['auth-token'];
-        if (!this.headerContainsToken(token)) return false;
+    public isAuthenticated = (req: any): boolean => {
+        const token = req.headers['auth-token'];
+        if (!this.containsToken(token)) return false;
 
-        this.jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err: any, decoded: any) => {
-            if (err) return false;
+        try {
+            const decoded = this.jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
             req.params.user = decoded;
-        });
 
-        return true;
+            return true;
+        } catch (err) {
+            console.log(err);
+            return false;
+        }
     };
 
     public getJwt = (): any => {

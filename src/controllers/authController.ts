@@ -67,11 +67,16 @@ export class AuthController {
         const token = this.authService.generateToken(user);
         const refreshToken = this.authService.refreshToken(user);
 
-        let persistRefreshToken = await this.tokenRepository.getByProperty('refreshToken', refreshToken);
+        let savedRefreshedToken = await this.tokenRepository.getByProperty('refreshToken', refreshToken);
+        console.log(savedRefreshedToken);
 
-        if (!persistRefreshToken) {
-            persistRefreshToken = this.mapRefreshToken(refreshToken);
-            await persistRefreshToken.save();
+        try {
+            if (!this.authService.headerContainsToken(savedRefreshedToken)) {
+                savedRefreshedToken = this.mapRefreshToken(refreshToken);
+                await savedRefreshedToken.save();
+            }
+        } catch (err) {
+            console.log(err);
         }
 
         return res.status(200).send({ token: token, refreshToken: refreshToken });
@@ -80,9 +85,12 @@ export class AuthController {
     public token = async (req: Request, res: Response, next: NextFunction) => {
         const refreshToken = req.body.token;
         if (refreshToken == null) return res.sendStatus(401);
-        //if (!this.refreshTokens.includes(refreshToken)) return res.sendStatus(403);
-        const persistRefreshToken = await this.tokenRepository.getByProperty('refreshToken', refreshToken);
-        if (refreshToken !== persistRefreshToken) return res.sendStatus(403);
+
+        const savedRefreshToken = await this.tokenRepository.getByProperty('refreshToken', refreshToken);
+
+        console.log(savedRefreshToken);
+
+        if (refreshToken !== savedRefreshToken) return res.sendStatus(403);
 
         const jwt = this.authService.getJwt();
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err: any, user: any) => {
@@ -92,7 +100,7 @@ export class AuthController {
         });
     };
 
-    private mapUser(req: any, hashedPassword: string): any {
+    private mapUser = (req: any, hashedPassword: string): any => {
         return new this.User({
             firstName: req.body.firstName,
             lastName: req.body.lastName,
@@ -101,11 +109,11 @@ export class AuthController {
             email: req.body.email,
             phone: req.body.phone
         });
-    }
+    };
 
-    private mapRefreshToken(token: string): any {
+    private mapRefreshToken = (token: string): any => {
         return new this.RefreshToken({
             refreshToken: token
         });
-    }
+    };
 }

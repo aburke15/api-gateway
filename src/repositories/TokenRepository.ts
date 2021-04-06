@@ -9,7 +9,7 @@ export class TokenRepository implements GenericRepository {
         this.refreshToken = opts.RefreshToken;
     }
 
-    public getByProperty = async (prop: string, value: any): Promise<any> => {
+    public getByProperty = async (prop: string, value: any): Promise<string> => {
         return await this.refreshToken.findOne({ prop, value });
     };
 }
