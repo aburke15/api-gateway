@@ -1,5 +1,3 @@
-import { Request, Response, NextFunction } from 'express';
-
 export class AuthService {
     bcrypt;
     jwt;
@@ -9,31 +7,42 @@ export class AuthService {
         this.jwt = opts.jwt;
     }
 
-    async getHashedPassword(password: string): Promise<string> {
+    public getHashedPassword = async (password: string): Promise<string> => {
         const saltRounds = 10;
         const salt = await this.bcrypt.genSalt(saltRounds);
 
         return await this.bcrypt.hash(password, salt);
-    }
+    };
 
-    async bcryptCompare(password: string, user: any): Promise<boolean> {
+    public bcryptCompare = async (password: string, user: any): Promise<boolean> => {
         return await this.bcrypt.compare(password, user.password);
-    }
+    };
 
-    generateToken(user: any) {
-        return this.jwt.sign({ _id: user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '45s' });
-    }
+    public generateToken = (user: any) => {
+        return this.jwt.sign({ _id: user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' });
+    };
 
-    refreshToken(user: any) {
+    public refreshToken = (user: any) => {
         return this.jwt.sign({ _id: user._id }, process.env.REFRESH_TOKEN_SECRET);
-    }
+    };
 
-    headerContainsToken(token: string): boolean {
-        if (!token) return false;
+    public headerContainsToken = (token: string): boolean => {
+        return !(token === '' || token === undefined || token === null);
+    };
+
+    public isAuthenticated = (req: any, next: any): boolean => {
+        let token = req.headers['auth-token'];
+        if (!this.headerContainsToken(token)) return false;
+
+        this.jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err: any, decoded: any) => {
+            if (err) return false;
+            req.params.user = decoded;
+        });
+
         return true;
-    }
+    };
 
-    getJwt(): any {
+    public getJwt = (): any => {
         return this.jwt;
-    }
+    };
 }

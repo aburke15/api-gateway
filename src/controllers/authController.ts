@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 
-class AuthController {
+export class AuthController {
     private readonly userService;
-    authService: any;
+    private readonly authService;
     private readonly validationService;
     private readonly User;
     private readonly RefreshToken;
@@ -109,5 +109,3 @@ class AuthController {
         });
     }
 }
-
-export = AuthController;

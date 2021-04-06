@@ -1,38 +1,43 @@
-import AuthController from './controllers/authController';
-import HealthContoller from './controllers/healthController';
+import { AuthController } from './controllers/authController';
+import { HealthController } from './controllers/healthController';
+import { PostController } from './controllers/postController';
 import { AuthService } from './services/authService';
-import UserService from './services/userService';
-import ValidationService from './services/validationService';
+import { UserService } from './services/userService';
+import { ValidationService } from './services/validationService';
+import { TokenRepository } from './repositories/TokenRepository';
 import User from './models/User';
 import RefreshToken from './models/RefreshToken';
-import { TokenRepository } from './repositories/TokenRepository';
-import { PostController } from './controllers/postController';
-
-const Joi = require('@hapi/joi');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 
 const awilix = require('awilix');
-const { createContainer, asClass, asValue, asFunction } = awilix;
-
-const postControllerDependencies = { UserService };
-const authServiceDependencies = { bcrypt, jwt };
-const authControllerDependencies = { UserService, AuthService, ValidationService, User, RefreshToken, TokenRepository };
+const { createContainer, asClass, asValue } = awilix;
 const container = createContainer(awilix.InjectionMode.PROXY);
 
+let Joi = require('@hapi/joi');
+let bcrypt = require('bcryptjs');
+let jwt = require('jsonwebtoken');
+
+let authControllerDependencies = {
+    UserService,
+    AuthService,
+    ValidationService,
+    User,
+    RefreshToken,
+    TokenRepository
+};
+
 container.register({
-    authService: asClass(AuthService).inject(() => authServiceDependencies),
+    authService: asClass(AuthService).inject(() => ({ bcrypt, jwt })),
     userService: asClass(UserService).inject(() => User),
     validationService: asClass(ValidationService).inject(() => Joi),
-    healthController: asClass(HealthContoller),
+    healthController: asClass(HealthController),
     authController: asClass(AuthController).inject(() => authControllerDependencies),
-    postController: asClass(PostController).inject(() => postControllerDependencies),
+    postController: asClass(PostController).inject(() => AuthService),
+    tokenRepository: asClass(TokenRepository).inject(() => ({ RefreshToken })),
     Joi: asValue(Joi),
     bcrypt: asValue(bcrypt),
     jwt: asValue(jwt),
     User: asValue(User),
-    RefreshToken: asValue(RefreshToken),
-    tokenRepository: asClass(TokenRepository).inject(() => RefreshToken)
+    RefreshToken: asValue(RefreshToken)
 });
 
 export = container;

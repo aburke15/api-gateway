@@ -7,7 +7,6 @@ import healthRoutes from './routes/healthRoutes';
 import authRoutes from './routes/authRoutes';
 import postRoutes from './routes/postRoutes';
 
-const jwt = require('jsonwebtoken');
 const NAMESPACE = 'Server';
 const app = express();
 
@@ -50,19 +49,6 @@ app.use((req, res, next) => {
 app.use('/api/health', healthRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/posts', postRoutes);
-
-app.use((req, res, next) => {
-    const token = req.headers['auth-token'];
-    if (!token) return res.send(401).send({ error: 'Unauthorized' });
-
-    try {
-        req.params.user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-        next();
-    } catch (err) {
-        console.log(err);
-        res.status(500).send({ error: 'Failed to authenticate ' });
-    }
-});
 
 app.use((req, res, next) => {
     const error = new Error('Not found');
