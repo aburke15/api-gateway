@@ -1,4 +1,4 @@
-class UserService {
+export class UserService {
     private readonly User;
 
     constructor(opts: any) {
@@ -13,5 +13,3 @@ class UserService {
         return await this.User.findOne({ _id: id });
     };
 }
-
-export = UserService;

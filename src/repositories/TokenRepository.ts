@@ -1,18 +1,15 @@
 interface GenericRepository {
-    findOne(prop: string, value: any): any;
+    getByProperty(prop: string, value: any): Promise<any>;
 }
 
-class TokenRepository {
+export class TokenRepository implements GenericRepository {
     private readonly refreshToken;
 
     constructor(opts: any) {
         this.refreshToken = opts.RefreshToken;
     }
 
-    public findOne = async (prop: string, value: any): Promise<any> => {
-        const refreshToken = (this.refreshToken[prop] = value);
-        return await this.refreshToken.findOne(refreshToken);
+    public getByProperty = async (prop: string, value: any): Promise<any> => {
+        return await this.refreshToken.findOne({ prop, value });
     };
 }
-
-export = TokenRepository;
