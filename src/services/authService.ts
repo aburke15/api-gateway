@@ -19,11 +19,11 @@ export class AuthService {
     };
 
     public generateToken = (user: any) => {
-        return this.jwt.sign({ _id: user._id }, process.env.ACCESS_TOKEN_SECRET);
+        return this.jwt.sign({ _id: user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
     };
 
     public refreshToken = (user: any) => {
-        return this.jwt.sign({ _id: user._id }, process.env.REFRESH_TOKEN_SECRET);
+        return this.jwt.sign({ _id: user._id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '30d' });
     };
 
     public containsToken = (token: string): boolean => {
