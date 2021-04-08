@@ -1,14 +1,17 @@
-FROM node:15
+FROM node
 
-WORKDIR /app/src
+WORKDIR /usr/app
 
 COPY package*.json ./
-COPY tsconfig*.json ./
-
-COPY src /app/src
 
 RUN npm install
 
-EXPOSE 80
+COPY . .
 
-CMD ["node", "./src/index.ts"]
+RUN npm run build
+
+COPY .env ./dist/
+WORKDIR ./dist
+
+EXPOSE 3069
+CMD node src/index.js
