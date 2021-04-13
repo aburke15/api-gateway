@@ -34,13 +34,14 @@ container.register({
     healthController: asClass(HealthController),
     authController: asClass(AuthController).inject(() => authControllerDependencies),
     postController: asClass(PostController).inject(() => AuthService),
-    tokenRepository: asClass(TokenRepository).inject(() => ({ RefreshToken })),
-    logger: asClass(Logger),
+    tokenRepository: asClass(TokenRepository).inject(() => ({ RefreshToken, Logger })),
+    logger: asClass(Logger).inject(() => Log),
     Joi: asValue(Joi),
     bcrypt: asValue(bcrypt),
     jwt: asValue(jwt),
     User: asValue(User),
-    RefreshToken: asValue(RefreshToken)
+    RefreshToken: asValue(RefreshToken),
+    Log: asValue(Log)
 });
 
 export = container;

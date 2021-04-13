@@ -21,8 +21,9 @@ export class AuthController {
         const { error } = this.validationService.registerValidation(req.body);
         if (error) return res.status(400).send(error.details[0].message);
 
-        const userExists = await this.userService.getSingleUser(req.body.email);
-        if (userExists) {
+        const existingUser = await this.userService.getSingleUser(req.body.email);
+
+        if (existingUser) {
             return res.status(400).send({
                 error: 'User already exists with that email.'
             });

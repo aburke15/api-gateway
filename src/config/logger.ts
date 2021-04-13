@@ -1,4 +1,10 @@
 export class Logger {
+    private readonly log;
+
+    constructor(opts: any) {
+        this.log = opts.Log;
+    }
+
     private getTimeStamp = (): string => {
         return new Date().toISOString();
     };
@@ -15,6 +21,7 @@ export class Logger {
     warn = (namespace: string, message: string, object?: any) => {
         if (object) {
             console.log(`[${this.getTimeStamp()}] [WARN] [${namespace}] ${message}`, object);
+
             return;
         }
 
