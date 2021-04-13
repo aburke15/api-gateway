@@ -1,6 +1,5 @@
 import http from 'http';
 import express from 'express';
-import logger from './config/logger';
 import config from './config/config';
 import mongoose from 'mongoose';
 import healthRoutes from './routes/healthRoutes';
@@ -9,6 +8,9 @@ import postRoutes from './routes/postRoutes';
 
 const NAMESPACE = 'Server';
 const app = express();
+
+const container = require('./container');
+const logger = container.resolve('logger');
 
 const uri = `${process.env.DB_URI}`;
 

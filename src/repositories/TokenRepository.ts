@@ -6,6 +6,10 @@ export class TokenRepository {
     }
 
     public getByTokenValue = async (token: string): Promise<string> => {
-        return await this.refreshToken.findOne({ refreshToken: token });
+        try {
+            return await this.refreshToken.findOne({ refreshToken: token });
+        } catch (error) {
+            return '';
+        }
     };
 }
