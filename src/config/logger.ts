@@ -1,46 +1,48 @@
-const getTimeStamp = (): string => {
-    return new Date().toISOString();
-};
+export class Logger {
+    private readonly log;
 
-const info = (namespace: string, message: string, object?: any) => {
-    if (object) {
-        console.log(`[${getTimeStamp()}] [INFO] [${namespace}] ${message}`, object);
-        return;
+    constructor(opts: any) {
+        this.log = opts.Log;
     }
 
-    console.log(`[${getTimeStamp()}] [INFO] [${namespace}] ${message}`);
-};
+    private getTimeStamp = (): string => {
+        return new Date().toISOString();
+    };
 
-const warn = (namespace: string, message: string, object?: any) => {
-    if (object) {
-        console.log(`[${getTimeStamp()}] [WARN] [${namespace}] ${message}`, object);
-        return;
-    }
+    info = (namespace: string, message: string, object?: any) => {
+        if (object) {
+            console.log(`[${this.getTimeStamp()}] [INFO] [${namespace}] ${message}`, object);
+            return;
+        }
 
-    console.log(`[${getTimeStamp()}] [WARN] [${namespace}] ${message}`);
-};
+        console.log(`[${this.getTimeStamp()}] [INFO] [${namespace}] ${message}`);
+    };
 
-const error = (namespace: string, message: string, object?: any) => {
-    if (object) {
-        console.log(`[${getTimeStamp()}] [ERROR] [${namespace}] ${message}`, object);
-        return;
-    }
+    warn = (namespace: string, message: string, object?: any) => {
+        if (object) {
+            console.log(`[${this.getTimeStamp()}] [WARN] [${namespace}] ${message}`, object);
 
-    console.log(`[${getTimeStamp()}] [ERROR] [${namespace}] ${message}`);
-};
+            return;
+        }
 
-const debug = (namespace: string, message: string, object?: any) => {
-    if (object) {
-        console.log(`[${getTimeStamp()}] [DEBUG] [${namespace}] ${message}`, object);
-        return;
-    }
+        console.log(`[${this.getTimeStamp()}] [WARN] [${namespace}] ${message}`);
+    };
 
-    console.log(`[${getTimeStamp()}] [DEBUG] [${namespace}] ${message}`);
-};
+    error = (namespace: string, message: string, object?: any) => {
+        if (object) {
+            console.log(`[${this.getTimeStamp()}] [ERROR] [${namespace}] ${message}`, object);
+            return;
+        }
 
-export default {
-    info,
-    warn,
-    error,
-    debug
-};
+        console.log(`[${this.getTimeStamp()}] [ERROR] [${namespace}] ${message}`);
+    };
+
+    debug = (namespace: string, message: string, object?: any) => {
+        if (object) {
+            console.log(`[${this.getTimeStamp()}] [DEBUG] [${namespace}] ${message}`, object);
+            return;
+        }
+
+        console.log(`[${this.getTimeStamp()}] [DEBUG] [${namespace}] ${message}`);
+    };
+}

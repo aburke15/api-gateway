@@ -5,8 +5,10 @@ import { AuthService } from './services/authService';
 import { UserService } from './services/userService';
 import { ValidationService } from './services/validationService';
 import { TokenRepository } from './repositories/TokenRepository';
+import { Logger } from './config/logger';
 import User from './models/User';
 import RefreshToken from './models/RefreshToken';
+import Log from './models/Log';
 
 const awilix = require('awilix');
 const { createContainer, asClass, asValue } = awilix;
@@ -32,12 +34,14 @@ container.register({
     healthController: asClass(HealthController),
     authController: asClass(AuthController).inject(() => authControllerDependencies),
     postController: asClass(PostController).inject(() => AuthService),
-    tokenRepository: asClass(TokenRepository).inject(() => ({ RefreshToken })),
+    tokenRepository: asClass(TokenRepository).inject(() => ({ RefreshToken, Logger })),
+    logger: asClass(Logger).inject(() => Log),
     Joi: asValue(Joi),
     bcrypt: asValue(bcrypt),
     jwt: asValue(jwt),
     User: asValue(User),
-    RefreshToken: asValue(RefreshToken)
+    RefreshToken: asValue(RefreshToken),
+    Log: asValue(Log)
 });
 
 export = container;

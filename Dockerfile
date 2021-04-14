@@ -1,14 +1,18 @@
-FROM node:15
+FROM node:alpine
 
-WORKDIR /app/src
+WORKDIR /usr/app
 
 COPY package*.json ./
-COPY tsconfig*.json ./
-
-COPY src /app/src
 
 RUN npm install
 
-EXPOSE 80
+COPY . .
 
-CMD ["node", "./src/index.ts"]
+# this stuff is for typescript
+RUN npm run build
+COPY .env ./dist/
+WORKDIR ./dist
+
+# exposing the port specified in the .env
+EXPOSE 3069
+CMD node src/index.js
