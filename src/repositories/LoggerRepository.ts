@@ -6,6 +6,6 @@ export class LoggerRepository {
     }
 
     public insertOneLog = async (log: any) => {
-        //this.Log.
+        await this.Log.save();
     };
 }
